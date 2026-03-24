@@ -24,7 +24,14 @@ const Sidebar = () => {
     { to: '/admin/complaints',  icon: 'fa-exclamation-circle', label: 'All Complaints' }
   ]
 
-  const links = ['ADMIN', 'STAFF'].includes(user?.role) ? adminLinks : studentLinks
+  const staffLinks = [
+    { to: '/staff/dashboard',   icon: 'fa-tachometer-alt', label: 'Dashboard' },
+    { to: '/staff/complaints',  icon: 'fa-exclamation-circle', label: 'Manage Complaints' }
+  ]
+
+  let links = studentLinks;
+  if (user?.role === 'ADMIN') links = adminLinks;
+  if (user?.role === 'STAFF') links = staffLinks;
 
   return (
     <div className="sidebar">
@@ -32,7 +39,7 @@ const Sidebar = () => {
         <div className="logo-icon"><i className="fas fa-building"></i></div>
         <div>
           <h2>SmartHostel</h2>
-          <p>{['ADMIN', 'STAFF'].includes(user?.role) ? 'Staff/Admin Panel' : 'Student Portal'}</p>
+          <p>{user?.role === 'ADMIN' ? 'Admin Panel' : user?.role === 'STAFF' ? 'Staff Panel' : 'Student Portal'}</p>
         </div>
       </div>
 

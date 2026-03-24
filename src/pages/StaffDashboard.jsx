@@ -4,36 +4,28 @@ import Navbar   from '../components/Navbar'
 import Footer   from '../components/Footer'
 import { useAuth } from '../hooks/useAuth'
 import { getAllComplaints, updateComplaintStatus } from '../services/complaintService'
-import { getAllStudents, getAllStaff } from '../services/adminService'
 import { toast } from 'react-toastify'
 
-const AdminDashboard = () => {
+const StaffDashboard = () => {
   const { token, user } = useAuth()
   const [complaints, setComplaints] = useState([])
-  const [students,   setStudents]   = useState([])
-  const [staff,      setStaff]      = useState([])
   const [loading,    setLoading]    = useState(true)
 
   useEffect(() => {
     if (!token) {
-      toast.error('Please login to access admin dashboard')
+      toast.error('Please login to access staff dashboard')
       setLoading(false)
       return
     }
     
-    Promise.all([
-      getAllComplaints(token),
-      getAllStudents(token),
-      getAllStaff(token)
-    ]).then(([c, s, st]) => {
-      setComplaints(c || [])
-      setStudents(s || [])
-      setStaff(st || [])
-    }).catch((error) => {
-      console.error('Dashboard error:', error)
-      const errorMsg = error.response?.data?.message || error.message || 'Failed to load dashboard data'
-      toast.error(errorMsg)
-    })
+    getAllComplaints(token)
+      .then((c) => {
+        setComplaints(c || [])
+      }).catch((error) => {
+        console.error('Dashboard error:', error)
+        const errorMsg = error.response?.data?.message || error.message || 'Failed to load dashboard data'
+        toast.error(errorMsg)
+      })
       .finally(() => setLoading(false))
   }, [token])
 
@@ -48,10 +40,10 @@ const AdminDashboard = () => {
   }
 
   const stats = [
-    { label: 'Total Students',   value: students.length,                                       icon: 'fa-user-graduate', bg: '#e8f4fd', color: '#0f3460' },
-    { label: 'Total Staff',      value: staff.length,                                           icon: 'fa-users',         bg: '#d4edda', color: '#155724' },
-    { label: 'Total Complaints', value: complaints.length,                                      icon: 'fa-list',          bg: '#fff3cd', color: '#856404' },
-    { label: 'Pending',          value: complaints.filter(c => c.status === 'PENDING').length,  icon: 'fa-clock',         bg: '#f8d7da', color: '#721c24' }
+    { label: 'Total Complaints', value: complaints.length,                                      icon: 'fa-list',          bg: '#e8f4fd', color: '#0f3460' },
+    { label: 'Pending',          value: complaints.filter(c => c.status === 'PENDING').length,  icon: 'fa-hourglass-half',         bg: '#fff3cd', color: '#856404' },
+    { label: 'In Progress',      value: complaints.filter(c => c.status === 'IN_PROGRESS').length, icon: 'fa-spinner',       bg: '#cce5ff', color: '#004085' },
+    { label: 'Resolved',         value: complaints.filter(c => c.status === 'RESOLVED').length, icon: 'fa-check-circle',  bg: '#d4edda', color: '#155724' }
   ]
 
   if (loading) return <div className="loading">Loading...</div>
@@ -60,14 +52,14 @@ const AdminDashboard = () => {
     <div className="layout">
       <Sidebar />
       <div className="main-content">
-        <Navbar title="Admin Dashboard" />
+        <Navbar title="Staff Dashboard" />
 
         <div className="welcome-banner">
           <div>
-            <h2>Admin Control Panel 🛡️</h2>
-            <p>Manage students, staff and complaints</p>
+            <h2>Staff Control Panel 🛠️</h2>
+            <p>Manage and resolve student complaints</p>
           </div>
-          <div className="banner-icon">⚙️</div>
+          <div className="banner-icon">📋</div>
         </div>
 
         <div className="stats-grid">
@@ -117,48 +109,10 @@ const AdminDashboard = () => {
             </table>
           </div>
         </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-          <div className="card">
-            <h3>Students ({students.length})</h3>
-            <div className="table-container">
-              <table>
-                <thead><tr><th>Name</th><th>Email</th><th>Room</th></tr></thead>
-                <tbody>
-                  {students.slice(0, 5).map(s => (
-                    <tr key={s.id}>
-                      <td>{s.name}</td>
-                      <td>{s.email}</td>
-                      <td>{s.roomNumber || 'N/A'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div className="card">
-            <h3>Staff ({staff.length})</h3>
-            <div className="table-container">
-              <table>
-                <thead><tr><th>Name</th><th>Designation</th><th>Dept</th></tr></thead>
-                <tbody>
-                  {staff.slice(0, 5).map(s => (
-                    <tr key={s.id}>
-                      <td>{s.name}</td>
-                      <td>{s.designation}</td>
-                      <td>{s.department}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
         <Footer />
       </div>
     </div>
   )
 }
 
-export default AdminDashboard
+export default StaffDashboard

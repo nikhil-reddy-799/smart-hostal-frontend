@@ -5,6 +5,7 @@ import Login            from '../pages/Login'
 import Register         from '../pages/Register'
 import StudentDashboard from '../pages/StudentDashboard'
 import AdminDashboard   from '../pages/AdminDashboard'
+import StaffDashboard   from '../pages/StaffDashboard'
 import SubmitComplaint  from '../pages/SubmitComplaint'
 import ComplaintList    from '../pages/ComplaintList'
 import Profile          from '../pages/Profile'
@@ -26,9 +27,11 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/"        element={token
-        ? (['ADMIN', 'STAFF'].includes(user?.role)
+        ? (user?.role === 'ADMIN'
             ? <Navigate to="/admin/dashboard" />
-            : <Navigate to="/student/dashboard" />)
+            : user?.role === 'STAFF' 
+              ? <Navigate to="/staff/dashboard" /> 
+              : <Navigate to="/student/dashboard" />)
         : <Navigate to="/login" />}
       />
       <Route path="/login"    element={<Login />} />
@@ -48,12 +51,20 @@ const AppRoutes = () => {
         <ProtectedRoute role="STUDENT"><Profile /></ProtectedRoute>
       }/>
 
-      {/* Admin/Staff Routes */}
+      {/* Admin Routes */}
       <Route path="/admin/dashboard" element={
-        <ProtectedRoute roles={['ADMIN', 'STAFF']}><AdminDashboard /></ProtectedRoute>
+        <ProtectedRoute roles={['ADMIN']}><AdminDashboard /></ProtectedRoute>
       }/>
       <Route path="/admin/complaints" element={
-        <ProtectedRoute roles={['ADMIN', 'STAFF']}><ComplaintList /></ProtectedRoute>
+        <ProtectedRoute roles={['ADMIN']}><ComplaintList /></ProtectedRoute>
+      }/>
+
+      {/* Staff Routes */}
+      <Route path="/staff/dashboard" element={
+        <ProtectedRoute role="STAFF"><StaffDashboard /></ProtectedRoute>
+      }/>
+      <Route path="/staff/complaints" element={
+        <ProtectedRoute role="STAFF"><ComplaintList /></ProtectedRoute>
       }/>
     </Routes>
   )
