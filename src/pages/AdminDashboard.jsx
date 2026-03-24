@@ -8,7 +8,7 @@ import { getAllStudents, getAllStaff } from '../services/adminService'
 import { toast } from 'react-toastify'
 
 const AdminDashboard = () => {
-  const { token } = useAuth()
+  const { token, user } = useAuth()
   const [complaints, setComplaints] = useState([])
   const [students,   setStudents]   = useState([])
   const [staff,      setStaff]      = useState([])
@@ -60,11 +60,11 @@ const AdminDashboard = () => {
     <div className="layout">
       <Sidebar />
       <div className="main-content">
-        <Navbar title="Admin Dashboard" />
+        <Navbar title={user?.role === 'STAFF' ? 'Staff Dashboard' : 'Admin Dashboard'} />
 
         <div className="welcome-banner">
           <div>
-            <h2>Admin Control Panel 🛡️</h2>
+            <h2>{user?.role === 'STAFF' ? 'Staff Control Panel 🛡️' : 'Admin Control Panel 🛡️'}</h2>
             <p>Manage students, staff and complaints</p>
           </div>
           <div className="banner-icon">⚙️</div>
