@@ -9,10 +9,14 @@ import SubmitComplaint  from '../pages/SubmitComplaint'
 import ComplaintList    from '../pages/ComplaintList'
 import Profile          from '../pages/Profile'
 
-const ProtectedRoute = ({ children, role }) => {
+const ProtectedRoute = ({ children, role, roles }) => {
   const { user, token } = useAuth()
   if (!token) return <Navigate to="/login" />
-  if (role && user?.role !== role) return <Navigate to="/login" />
+  
+  const allowedRoles = roles || (role ? [role] : [])
+  if (allowedRoles.length > 0 && !allowedRoles.includes(user?.role)) {
+    return <Navigate to="/login" />
+  }
   return children
 }
 
@@ -22,7 +26,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/"        element={token
-        ? (user?.role === 'ADMIN'
+        ? (['ADMIN', 'STAFF'].includes(user?.role)
             ? <Navigate to="/admin/dashboard" />
             : <Navigate to="/student/dashboard" />)
         : <Navigate to="/login" />}
@@ -44,12 +48,12 @@ const AppRoutes = () => {
         <ProtectedRoute role="STUDENT"><Profile /></ProtectedRoute>
       }/>
 
-      {/* Admin Routes */}
+      {/* Admin/Staff Routes */}
       <Route path="/admin/dashboard" element={
-        <ProtectedRoute role="ADMIN"><AdminDashboard /></ProtectedRoute>
+        <ProtectedRoute roles={['ADMIN', 'STAFF']}><AdminDashboard /></ProtectedRoute>
       }/>
       <Route path="/admin/complaints" element={
-        <ProtectedRoute role="ADMIN"><ComplaintList /></ProtectedRoute>
+        <ProtectedRoute roles={['ADMIN', 'STAFF']}><ComplaintList /></ProtectedRoute>
       }/>
     </Routes>
   )

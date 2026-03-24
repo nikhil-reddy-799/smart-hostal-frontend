@@ -20,7 +20,7 @@ const Login = () => {
       const data = await loginUser(form)
       login({ name: data.name, email: data.email, role: data.role }, data.token)
       toast.success('Login successful!')
-      if (data.role === 'ADMIN') navigate('/admin/dashboard')
+      if (data.role === 'ADMIN' || data.role === 'STAFF') navigate('/admin/dashboard')
       else navigate('/student/dashboard')
     } catch (err) {
       toast.error(err.response?.data?.error || 'Login failed')
