@@ -8,7 +8,7 @@ import { toast } from 'react-toastify'
 
 const ComplaintList = () => {
   const { user, token } = useAuth()
-  const isAdmin = user?.role === 'ADMIN'
+  const isAdmin = ['ADMIN', 'STAFF'].includes(user?.role)
   const [complaints, setComplaints] = useState([])
   const [loading,    setLoading]    = useState(true)
   const [filter,     setFilter]     = useState('ALL')
