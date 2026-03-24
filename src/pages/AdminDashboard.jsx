@@ -141,13 +141,13 @@ const AdminDashboard = () => {
             <h3>Staff ({staff.length})</h3>
             <div className="table-container">
               <table>
-                <thead><tr><th>Name</th><th>Designation</th><th>Dept</th></tr></thead>
+                <thead><tr><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
                 <tbody>
                   {staff.slice(0, 5).map(s => (
                     <tr key={s.id}>
                       <td>{s.name}</td>
-                      <td>{s.designation}</td>
-                      <td>{s.department}</td>
+                      <td>{s.email}</td>
+                      <td>{s.phone || 'N/A'}</td>
                     </tr>
                   ))}
                 </tbody>
