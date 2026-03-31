@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import Login            from '../pages/Login'
 import Register         from '../pages/Register'
+import Home             from '../pages/Home'
 import StudentDashboard from '../pages/StudentDashboard'
 import AdminDashboard   from '../pages/AdminDashboard'
 import StaffDashboard   from '../pages/StaffDashboard'
@@ -26,13 +27,7 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/"        element={token
-        ? (user?.role === 'ADMIN'
-            ? <Navigate to="/admin/dashboard" />
-            : user?.role === 'STAFF' 
-              ? <Navigate to="/staff/dashboard" /> 
-              : <Navigate to="/student/dashboard" />)
-        : <Navigate to="/login" />}
+      <Route path="/"        element={<Home />}
       />
       <Route path="/login"    element={<Login />} />
       <Route path="/register" element={<Register />} />
